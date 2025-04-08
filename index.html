@@ -29,9 +29,35 @@
     .negative { background-color: #f44336; color: white; }
     .neutral { background-color: #ff9800; color: white; }
     .bonus { background-color: #2196F3; color: white; }
-    .locked { pointer-events: none; opacity: 0.6; }
+    .locked {
+      pointer-events: none;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    input.locked, textarea.locked {
+      pointer-events: none;
+      background-color: #f0f0f0;
+    }
     .members { text-align: left; max-height: 200px; overflow-y: auto; margin-top: 10px; }
     .captain { font-weight: bold; color: #d2691e; }
+    .flash {
+      animation: flashRed 0.5s;
+    }
+    @keyframes flashRed {
+      0% { background-color: #ffcccc; }
+      50% { background-color: #ff0000; }
+      100% { background-color: #ffcccc; }
+    }
+    .shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(5px, 5px); }
+      50% { transform: translate(-5px, -5px); }
+      75% { transform: translate(5px, -5px); }
+      100% { transform: translate(0px, 0px); }
+    }
   </style>
 </head>
 <body>
@@ -40,11 +66,14 @@
 
   <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
     <img src="WarCapy.png" alt="Professor Capybara" style="max-width: 250px; border-radius: 20px; margin-bottom: 10px;">
-    <button onclick="unlockAdmin()">🔒 Admin Login</button>
+    <button class="locked" onclick="unlockAdmin()">🔒 Admin Login</button>
   </div>
 
+  <!-- Sound Effect -->
+  <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3" preload="auto"></audio>
+
   <div class="team" id="team1">
-    <input type="text" id="team1name" placeholder="Team 1 Name" onchange="updateTeamName(1)">
+    <input type="text" id="team1name" class="locked" placeholder="Team 1 Name" onchange="updateTeamName(1)">
     <h2 id="team1title">Team 1</h2>
     <div class="score" id="score1">0</div>
     <div>
@@ -54,13 +83,13 @@
       <button class="neutral locked" onclick="updateScore(1, 0)">Wrong Answer (0)</button>
       <button class="bonus locked" onclick="addBonus(1)">Add Bonus</button>
     </div>
-    <textarea id="team1members" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
+    <textarea id="team1members" class="locked" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
     <div class="members" id="team1list"></div>
-    <button onclick="updateMembers(1)">Update Members</button>
+    <button class="locked" onclick="updateMembers(1)">Update Members</button>
   </div>
 
   <div class="team" id="team2">
-    <input type="text" id="team2name" placeholder="Team 2 Name" onchange="updateTeamName(2)">
+    <input type="text" id="team2name" class="locked" placeholder="Team 2 Name" onchange="updateTeamName(2)">
     <h2 id="team2title">Team 2</h2>
     <div class="score" id="score2">0</div>
     <div>
@@ -70,17 +99,27 @@
       <button class="neutral locked" onclick="updateScore(2, 0)">Wrong Answer (0)</button>
       <button class="bonus locked" onclick="addBonus(2)">Add Bonus</button>
     </div>
-    <textarea id="team2members" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
+    <textarea id="team2members" class="locked" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
     <div class="members" id="team2list"></div>
-    <button onclick="updateMembers(2)">Update Members</button>
+    <button class="locked" onclick="updateMembers(2)">Update Members</button>
   </div>
 
   <script>
     let scores = { 1: 0, 2: 0 };
 
     function updateScore(team, points) {
-      scores[team] += points;
-      document.getElementById(`score${team}`).innerText = scores[team];
+      if (points === 0) {
+        // Wrong Answer special effect
+        const teamDiv = document.getElementById(`team${team}`);
+        teamDiv.classList.add('flash', 'shake');
+        document.getElementById('fail-sound').play();
+        setTimeout(() => {
+          teamDiv.classList.remove('flash', 'shake');
+        }, 500);
+      } else {
+        scores[team] += points;
+        document.getElementById(`score${team}`).innerText = scores[team];
+      }
     }
 
     function addBonus(team) {
@@ -113,7 +152,7 @@
     function unlockAdmin() {
       const pwd = prompt("Enter Admin Password:");
       if (pwd === "ppqf3$$") {
-        document.querySelectorAll('button').forEach(btn => btn.classList.remove('locked'));
+        document.querySelectorAll('.locked').forEach(el => el.classList.remove('locked'));
         alert("Admin mode activated!");
       } else {
         alert("Incorrect password.");
