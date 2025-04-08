@@ -7,7 +7,6 @@
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #f0f8ff; }
     h1 { font-size: 28px; margin-bottom: 10px; }
-    img { width: 200px; margin-bottom: 20px; }
     .team {
       border: 2px solid #ccc;
       border-radius: 10px;
@@ -38,9 +37,11 @@
 <body>
 
   <h1>Cloud Security Benchmark Challenge</h1>
-<img src="WarCapy.png" alt="Professor Capybara" style="max-width: 250px; border-radius: 20px;">
 
-  <button onclick="unlockAdmin()">🔒 Admin Login</button>
+  <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+    <img src="WarCapy.png" alt="Professor Capybara" style="max-width: 250px; border-radius: 20px; margin-bottom: 10px;">
+    <button onclick="unlockAdmin()">🔒 Admin Login</button>
+  </div>
 
   <div class="team" id="team1">
     <input type="text" id="team1name" placeholder="Team 1 Name" onchange="updateTeamName(1)">
