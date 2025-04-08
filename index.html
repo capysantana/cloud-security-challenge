@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Security Benchmark Challenge - Scoreboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 30px; background-color: #f0f8ff; }
+    h1 { font-size: 28px; margin-bottom: 10px; }
+    img { width: 200px; margin-bottom: 20px; }
+    .team {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px;
+      display: inline-block;
+      width: 300px;
+      vertical-align: top;
+    }
+    .score { font-size: 48px; margin: 20px 0; }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .positive { background-color: #4CAF50; color: white; }
+    .negative { background-color: #f44336; color: white; }
+    .neutral { background-color: #ff9800; color: white; }
+    .bonus { background-color: #2196F3; color: white; }
+    .locked { pointer-events: none; opacity: 0.6; }
+    .members { text-align: left; max-height: 200px; overflow-y: auto; margin-top: 10px; }
+    .captain { font-weight: bold; color: #d2691e; }
+  </style>
+</head>
+<body>
+
+  <h1>Cloud Security Benchmark Challenge</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Capybara_portrait.jpg" alt="Capybara">
+
+  <button onclick="unlockAdmin()">🔒 Admin Login</button>
+
+  <div class="team" id="team1">
+    <input type="text" id="team1name" placeholder="Team 1 Name" onchange="updateTeamName(1)">
+    <h2 id="team1title">Team 1</h2>
+    <div class="score" id="score1">0</div>
+    <div>
+      <button class="positive locked" onclick="updateScore(1, 3)">Right Answer (+3)</button>
+      <button class="positive locked" onclick="updateScore(1, 2)">Good Question (+2)</button>
+      <button class="negative locked" onclick="updateScore(1, -1)">Bad Question (-1)</button>
+      <button class="neutral locked" onclick="updateScore(1, 0)">Wrong Answer (0)</button>
+      <button class="bonus locked" onclick="addBonus(1)">Add Bonus</button>
+    </div>
+    <textarea id="team1members" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
+    <div class="members" id="team1list"></div>
+    <button onclick="updateMembers(1)">Update Members</button>
+  </div>
+
+  <div class="team" id="team2">
+    <input type="text" id="team2name" placeholder="Team 2 Name" onchange="updateTeamName(2)">
+    <h2 id="team2title">Team 2</h2>
+    <div class="score" id="score2">0</div>
+    <div>
+      <button class="positive locked" onclick="updateScore(2, 3)">Right Answer (+3)</button>
+      <button class="positive locked" onclick="updateScore(2, 2)">Good Question (+2)</button>
+      <button class="negative locked" onclick="updateScore(2, -1)">Bad Question (-1)</button>
+      <button class="neutral locked" onclick="updateScore(2, 0)">Wrong Answer (0)</button>
+      <button class="bonus locked" onclick="addBonus(2)">Add Bonus</button>
+    </div>
+    <textarea id="team2members" rows="10" cols="25" placeholder="List members, mark captains with *"></textarea>
+    <div class="members" id="team2list"></div>
+    <button onclick="updateMembers(2)">Update Members</button>
+  </div>
+
+  <script>
+    let scores = { 1: 0, 2: 0 };
+
+    function updateScore(team, points) {
+      scores[team] += points;
+      document.getElementById(`score${team}`).innerText = scores[team];
+    }
+
+    function addBonus(team) {
+      let bonus = parseInt(prompt("Enter bonus points (1-5):"));
+      if (!isNaN(bonus) && bonus >= 1 && bonus <= 5) {
+        scores[team] += bonus;
+        document.getElementById(`score${team}`).innerText = scores[team];
+      } else {
+        alert("Please enter a valid bonus between 1 and 5.");
+      }
+    }
+
+    function updateTeamName(team) {
+      const name = document.getElementById(`team${team}name`).value;
+      document.getElementById(`team${team}title`).innerText = name || `Team ${team}`;
+    }
+
+    function updateMembers(team) {
+      const input = document.getElementById(`team${team}members`).value.split('\n');
+      const list = input.map(name => {
+        if (name.trim().startsWith('*')) {
+          return `<div class='captain'>${name.replace('*', '').trim()} (Captain)</div>`;
+        } else {
+          return `<div>${name.trim()}</div>`;
+        }
+      }).join('');
+      document.getElementById(`team${team}list`).innerHTML = list;
+    }
+
+    function unlockAdmin() {
+      const pwd = prompt("Enter Admin Password:");
+      if (pwd === "ppqf3$$") {
+        document.querySelectorAll('button').forEach(btn => btn.classList.remove('locked'));
+        alert("Admin mode activated!");
+      } else {
+        alert("Incorrect password.");
+      }
+    }
+  </script>
+
+</body>
+</html>
