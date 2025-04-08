@@ -15,6 +15,8 @@
       display: inline-block;
       width: 300px;
       vertical-align: top;
+      background-color: white; /* Important for flashing red */
+      transition: background-color 0.3s ease;
     }
     .score { font-size: 48px; margin: 20px 0; }
     button {
@@ -41,12 +43,7 @@
     .members { text-align: left; max-height: 200px; overflow-y: auto; margin-top: 10px; }
     .captain { font-weight: bold; color: #d2691e; }
     .flash {
-      animation: flashRed 0.5s;
-    }
-    @keyframes flashRed {
-      0% { background-color: #ffcccc; }
-      50% { background-color: #ff0000; }
-      100% { background-color: #ffcccc; }
+      background-color: #ff4d4d !important;
     }
     .shake {
       animation: shake 0.5s;
@@ -64,13 +61,16 @@
 
   <h1>Cloud Security Benchmark Challenge</h1>
 
- <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
-  <img src="WarCapy.png" alt="Professor Capybara" style="max-width: 250px; border-radius: 20px; margin-bottom: 10px;">
-  <button onclick="unlockAdmin()">🔒 Admin Login</button>
-</div>
+  <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+    <img src="WarCapy.png" alt="Professor Capybara" style="max-width: 250px; border-radius: 20px; margin-bottom: 10px;">
+    <button onclick="unlockAdmin()">🔒 Admin Login</button>
+  </div>
 
   <!-- Sound Effect -->
-  <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3" preload="auto"></audio>
+  <audio id="fail-sound" preload="auto">
+    <source src="https://www.soundjay.com/button/beep-10.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
   <div class="team" id="team1">
     <input type="text" id="team1name" class="locked" placeholder="Team 1 Name" onchange="updateTeamName(1)">
@@ -108,11 +108,14 @@
     let scores = { 1: 0, 2: 0 };
 
     function updateScore(team, points) {
+      const teamDiv = document.getElementById(`team${team}`);
+      const failSound = document.getElementById('fail-sound');
+
       if (points === 0) {
-        // Wrong Answer special effect
-        const teamDiv = document.getElementById(`team${team}`);
+        // Wrong Answer Effects
         teamDiv.classList.add('flash', 'shake');
-        document.getElementById('fail-sound').play();
+        failSound.currentTime = 0; // Restart sound
+        failSound.play();
         setTimeout(() => {
           teamDiv.classList.remove('flash', 'shake');
         }, 500);
